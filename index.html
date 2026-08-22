@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17251d">
+<title>Morning Move Coach — 10K</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:#17251d}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(160deg,#17251d,#294536);display:flex;justify-content:center}
+.app{width:min(560px,100%);padding:18px 16px 32px}h1{text-align:center;font-size:28px;margin:6px 0}.sub{text-align:center;opacity:.8;margin-bottom:12px}
+.card{background:rgba(255,255,255,.1);border-radius:22px;padding:18px;margin-bottom:12px;backdrop-filter:blur(8px)}
+.tabs{display:flex;gap:6px;overflow:auto}.tabs button{flex:1;min-width:80px}
+button{border:0;border-radius:15px;padding:13px 14px;font-size:15px;font-weight:700;background:rgba(255,255,255,.16);color:#fff}
+.primary{background:#fff;color:#17251d}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.phase{text-align:center;font-size:32px;font-weight:800}.timer{text-align:center;font-size:65px;font-weight:800}.detail{text-align:center;min-height:24px;opacity:.86}
+.badge{display:block;text-align:center;opacity:.8;font-size:14px;margin-bottom:8px}
+.herb h2{margin:0 0 7px;font-size:21px}.herb p{margin:5px 0;line-height:1.42}
+.schedule h2{font-size:20px;margin:0 0 8px}.day{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}.day:last-child{border:0}
+.small{font-size:12px;opacity:.7;line-height:1.45}.controls{text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>Morning Move Coach</h1>
+<div class="sub">Your gradual 10K journey 🌿🏃</div>
+
+<div class="card">
+ <div class="tabs">
+  <button onclick="setWeek(week-1)">‹ Week</button>
+  <button class="primary" onclick="today()">TODAY</button>
+  <button onclick="setWeek(week+1)">Week ›</button>
+ </div>
+ <div class="badge" id="weekBadge"></div>
+ <div class="grid">
+  <button onclick="setDay(1)">Mon</button><button onclick="setDay(2)">Tue</button>
+  <button onclick="setDay(3)">Wed</button><button onclick="setDay(4)">Thu</button>
+  <button onclick="setDay(5)">Fri</button><button onclick="setDay(6)">Sat</button>
+  <button onclick="setDay(7)">Sun</button>
+ </div>
+</div>
+
+<div class="card">
+ <div id="phase" class="phase">READY</div>
+ <div id="timer" class="timer">05:00</div>
+ <div id="detail" class="detail">Select a workout day</div>
+</div>
+
+<div class="card herb" id="herbCard"></div>
+
+<div class="card schedule">
+ <h2>This week's plan</h2>
+ <div id="schedule"></div>
+</div>
+
+<div class="controls">
+ <button class="primary" onclick="startWorkout()">START</button>
+ <button onclick="stopWorkout()">STOP</button>
+ <button onclick="repeatWeek()">REPEAT THIS WEEK</button>
+</div>
+<p class="small" style="text-align:center;margin-top:12px">
+Voice + beep cues. Put the phone away after START.<br>
+If a week feels too hard, repeat it. Pain is a stop signal.
+</p>
+</div>
+
+<script>
+const herbs=[
+["Chamomile","Matricaria chamomilla","Asteraceae","Flowers","Small annual herb with white petals, yellow cone-like centre, feathery leaves and sweet apple scent.","Nervine — calms the nervous system. Digestive — helps with bloating. Antispasmodic — helps with spasms."],
+["Comfrey","Symphytum officinale","Boraginaceae","Leaf/root","Upright herb with broad hairy leaves and bell-shaped flowers.","Traditionally used externally for bruises and minor injuries. Internal use requires particular caution."],
+["Dandelion","Taraxacum officinale","Asteraceae","Root/leaf","Familiar plant with toothed leaves and bright yellow flower heads.","Bitter digestive herb traditionally used to support appetite and digestion."],
+["Calendula","Calendula officinalis","Asteraceae","Flowers","Aromatic annual with bright yellow to orange daisy-like flower heads.","Traditionally soothing and supportive for minor skin irritation."],
+["Peppermint","Mentha × piperita","Lamiaceae","Leaves","Strongly aromatic mint with square stems and toothed leaves.","Carminative — traditionally used for gas, bloating and digestive discomfort."],
+["Yarrow","Achillea millefolium","Asteraceae","Aerial parts/flowers","Upright herb with finely divided leaves and flat clusters of small flowers.","Traditionally used for digestive and fever support."],
+["Ginger","Zingiber officinale","Zingiberaceae","Rhizome","Tropical plant grown for its underground rhizome.","Warming digestive herb traditionally used for nausea."],
+["Fennel","Foeniculum vulgare","Apiaceae","Seeds","Tall aromatic herb with fine feathery leaves and yellow umbels.","Carminative — traditionally used for gas and bloating."],
+["Garlic","Allium sativum","Amaryllidaceae","Bulb","Bulb-forming plant with long strap-like leaves and strong aroma.","Traditionally valued for cardiovascular and immune support."],
+["Valerian","Valeriana officinalis","Caprifoliaceae","Root","Tall perennial with divided leaves and clusters of pale flowers.","Nervine/sedative traditionally used for tension and sleep support."]
+];
+
+const plans=[
+{run:60,walk:120,reps:8,long:20},{run:120,walk:120,reps:8,long:25},
+{run:180,walk:120,reps:7,long:30},{run:240,walk:120,reps:7,long:35},
+{run:300,walk:120,reps:6,long:40},{run:360,walk:120,reps:6,long:45},
+{run:480,walk:120,reps:5,long:50},{run:600,walk:120,reps:5,long:60},
+{run:720,walk:120,reps:4,long:65},{run:900,walk:120,reps:4,long:70},
+{run:1200,walk:120,reps:3,long:75},{run:1500,walk:120,reps:3,long:80}
+];
+
+const dayNames=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+let week=1,day=1,plan=[],idx=0,remaining=0,timer=null,running=false;
+
+function herbForDay(d){return herbs[Math.floor((d-1)/2)%herbs.length]}
+function herbCard(){
+ const h=herbForDay(day), lesson=(day%2===1)?h[4]:h[5];
+ document.getElementById("herbCard").innerHTML=
+ `<h2>🌿 ${h[0]}</h2><p><strong>${h[1]}</strong></p><p>Family: ${h[2]} • Part used: ${h[3]}</p><p>${lesson}</p><p class="small">This herb is your lesson for two days. Day ${day%2===1?"1":"2"} of 2.</p>`;
+}
+function dayType(){
+ if(day===1||day===3||day===5)return "RUN";
+ if(day===2)return "STRENGTH";
+ if(day===4||day===7)return "RECOVERY";
+ return "LONG";
+}
+function workoutText(){
+ const t=dayType(),p=plans[week-1];
+ if(t==="RUN")return "Run/Walk intervals";
+ if(t==="STRENGTH")return "Strength + mobility";
+ if(t==="RECOVERY")return "Easy recovery walk";
+ return `Long easy session — ${p.long} min`;
+}
+function renderSchedule(){
+ const p=plans[week-1],el=document.getElementById("schedule");
+ el.innerHTML=dayNames.map((n,i)=>{
+   const d=i+1, type=(d===1||d===3||d===5)?"🏃 Run/Walk":d===2?"💪 Strength":(d===4||d===7)?"🚶 Recovery":"🏃 Long easy";
+   return `<div class="day"><strong>${n}</strong> — ${type}<br><span class="small">${d===6?`${p.long} min easy session`:d===2?"Squats • calf raises • glute bridges • core • mobility":d===4||d===7?"Easy walk + gentle mobility":"Warm-up + workout + cool-down"}</span></div>`;
+ }).join("");
+ document.getElementById("weekBadge").textContent=`Week ${week} of 12 • ${workoutText()}`;
+}
+function buildWorkout(){
+ const t=dayType(),p=plans[week-1];
+ if(t==="RUN"){
+  plan=[{name:"WALK",secs:300,label:"5-minute warm-up walk"}];
+  for(let i=1;i<=p.reps;i++){plan.push({name:"RUN",secs:p.run,label:`Run ${i} of ${p.reps}`});plan.push({name:"WALK",secs:p.walk,label:`Recovery walk ${i} of ${p.reps}`});}
+  plan.push({name:"WALK",secs:300,label:"5-minute cool-down"});
+ }else if(t==="LONG"){
+  plan=[{name:"WALK",secs:600,label:"10-minute warm-up walk"},{name:"MOVE",secs:p.long*60,label:`Easy long session — ${p.long} minutes`},{name:"WALK",secs:600,label:"10-minute cool-down"}];
+ }else if(t==="RECOVERY"){
+  plan=[{name:"WALK",secs:1800,label:"30-minute easy recovery walk"}];
+ }else{
+  plan=[{name:"SQUATS",secs:45,label:"Bodyweight squats"},{name:"REST",secs:30,label:"Rest"},{name:"CALVES",secs:45,label:"Calf raises"},{name:"REST",secs:30,label:"Rest"},{name:"BRIDGE",secs:45,label:"Glute bridges"},{name:"REST",secs:30,label:"Rest"},{name:"CORE",secs:30,label:"Easy core hold"},{name:"REST",secs:30,label:"Rest"},{name:"MOVE",secs:300,label:"Gentle mobility and stretching"}];
+ }
+ idx=0;remaining=plan[0].secs;show();
+}
+function beep(){try{let C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.18)}catch(e){}}
+function speak(t){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.rate=.95;speechSynthesis.speak(u)}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function show(){const p=plan[idx];phase.textContent=p.name;timerEl.textContent=fmt(remaining);detail.textContent=p.label}
+function announce(){beep();setTimeout(()=>speak(plan[idx].name),100)}
+function nextPhase(){idx++;if(idx>=plan.length){running=false;clearInterval(timer);phase.textContent="DONE";timerEl.textContent="00:00";detail.textContent="Session complete. Well done.";beep();setTimeout(()=>speak("Workout complete. Well done."),150);return}remaining=plan[idx].secs;show();announce()}
+function tick(){remaining--;show();if(remaining<=0)nextPhase()}
+function startWorkout(){if(running)return;running=true;show();announce();clearInterval(timer);timer=setInterval(tick,1000)}
+function stopWorkout(){running=false;clearInterval(timer);speak("Workout stopped.");phase.textContent="PAUSED";detail.textContent="Press START to begin again."}
+function setWeek(w){week=Math.min(12,Math.max(1,w));buildWorkout();renderSchedule();herbCard()}
+function setDay(d){day=d;buildWorkout();herbCard()}
+function today(){setWeek(1);setDay(1)}
+function repeatWeek(){buildWorkout();speak("Repeat this week. Build gradually.");}
+const phase=document.getElementById("phase"),timerEl=document.getElementById("timer"),detail=document.getElementById("detail");
+renderSchedule();buildWorkout();herbCard();
+</script>
+</body>
+</html>
