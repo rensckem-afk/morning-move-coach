@@ -358,5 +358,13 @@ updateTimer();
 
 </script>
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js")
+    .then(() => console.log("Offline mode ready"))
+    .catch(err => console.log("Service worker error:", err));
+}
+</script>
+  
 </body>
 </html>
