@@ -292,46 +292,83 @@ document.getElementById("timer").innerText=formatTime(timerSeconds);
 
 function startWorkout(){
 
-if(running)return;
+  if(running) return;
 
-running=true;
+  running = true;
 
-document.getElementById("phase").innerText="Warm-up";
-document.getElementById("workoutInfo").innerText=
-"Start gently. Walk comfortably for 5 minutes.";
+  let runTime = 60;
+  let walkTime = 120;
+  let intervals = 7;
+  let currentInterval = 1;
+  let phase = "run";
+  timerSeconds = runTime;
 
-speak(
-"Welcome to your Morning Move Coach. We are starting with a five minute warm-up. Walk comfortably and settle into your breathing. While you exercise, we will learn chamomile."
-);
+  document.getElementById("phase").innerText =
+    "RUN " + currentInterval + " of " + intervals;
 
-interval=setInterval(()=>{
+  document.getElementById("workoutInfo").innerText =
+    "Run for 1 minute, then walk for 2 minutes.";
 
-if(timerSeconds>0){
-timerSeconds--;
-updateTimer();
+  speak("Start your run. Run for 1 minute.");
 
-if(timerSeconds===240){
-speakHerb();
+  interval = setInterval(() => {
+
+    if(timerSeconds > 0){
+      timerSeconds--;
+      updateTimer();
+      return;
+    }
+
+    if(phase === "run"){
+
+      phase = "walk";
+      timerSeconds = walkTime;
+
+      document.getElementById("phase").innerText =
+        "WALK " + currentInterval + " of " + intervals;
+
+      speak(
+        "Time to walk for 2 minutes. " +
+        "Herb question: What herb are you studying today?"
+      );
+
+    } else {
+
+      currentInterval++;
+
+      if(currentInterval > intervals){
+
+        clearInterval(interval);
+        running = false;
+
+        document.getElementById("phase").innerText =
+          "Workout complete";
+
+        document.getElementById("workoutInfo").innerText =
+          "Excellent work. Your 7 run and walk intervals are complete.";
+
+        speak(
+          "Well done. Your 7 run and walk intervals are complete."
+        );
+
+        return;
+      }
+
+      phase = "run";
+      timerSeconds = runTime;
+
+      document.getElementById("phase").innerText =
+        "RUN " + currentInterval + " of " + intervals;
+
+      speak(
+        "Walk complete. Start your next 1 minute run."
+      );
+    }
+
+    updateTimer();
+
+  }, 1000);
 }
-
-if(timerSeconds===180){
-document.getElementById("phase").innerText="Training";
-document.getElementById("workoutInfo").innerText=
-"Now begin your planned run or walk interval.";
-}
-}else{
-clearInterval(interval);
-running=false;
-document.getElementById("phase").innerText="Cool-down";
-timerSeconds=300;
-updateTimer();
-
-speak(
-"Well done. Your main session is complete. Walk easily for your cool-down. Take slow comfortable breaths."
-);
-}
-
-},1000);
 }
 
 function pauseWorkout(){
