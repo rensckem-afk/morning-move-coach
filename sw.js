@@ -1,4 +1,4 @@
-const CACHE_NAME = "morning-move-coach-v2";
+const CACHE_NAME = "morning-move-coach-v3";
 
 const FILES_TO_CACHE = [
   "./",
