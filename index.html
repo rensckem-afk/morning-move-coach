@@ -1,82 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#17251d">
-<title>Morning Move Coach – 10K + Herbs</title>
+<meta name="theme-color" content="#17351d">
+<title>Morning Move Coach</title>
 
 <style>
-:root{
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-  color:#17251d;
-  background:#eef3ed;
-}
 *{box-sizing:border-box}
-body{margin:0}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  background:#eef3ed;
+  color:#17351d;
+}
 .app{
-  width:min(560px,100%);
+  max-width:560px;
   margin:auto;
-  padding:18px 16px 40px;
+  padding:16px 14px 40px;
 }
 .card{
   background:white;
-  border-radius:22px;
-  padding:20px;
+  border-radius:20px;
+  padding:18px;
   margin-bottom:14px;
-  box-shadow:0 4px 18px #00000012;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
 }
-h1{font-size:26px;margin:0 0 5px}
-h2{font-size:21px;margin:0 0 8px}
-h3{margin-bottom:6px}
-p{line-height:1.5}
+h1,h2,h3{margin-top:0}
+.subtitle{color:#53635a}
 button{
   border:0;
-  border-radius:15px;
+  border-radius:14px;
   padding:13px 16px;
   font-size:16px;
+  font-weight:700;
+  cursor:pointer;
   margin:4px;
-  background:#dfe9df;
-  color:#17251d;
 }
-.primary{
-  background:#17251d;
-  color:white;
-}
+.primary{background:#17351d;color:white}
+.secondary{background:#dfe9df;color:#17351d}
+.danger{background:#f1dddd;color:#7a2020}
 .tabs{
   display:flex;
   gap:6px;
   overflow:auto;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
-.tabs button{white-space:nowrap}
-.phase{
-  text-align:center;
-  font-size:34px;
-  font-weight:700;
-  margin:12px 0;
+.tab{
+  background:#e4eee4;
+  white-space:nowrap;
+  padding:10px 12px;
+  border-radius:12px;
 }
 .timer{
-  text-align:center;
   font-size:52px;
+  font-weight:800;
+  text-align:center;
+  margin:8px 0;
+}
+.phase{
+  text-align:center;
+  font-size:20px;
   font-weight:700;
 }
-.badge{
+.question{
+  background:#f3f7f1;
+  border-left:5px solid #718d63;
+  padding:14px;
+  border-radius:12px;
+  margin-top:12px;
+}
+.answer{
   display:block;
-  text-align:center;
-  opacity:.7;
-  margin-bottom:5px;
+  width:100%;
+  text-align:left;
+  background:white;
+  border:2px solid #d9e3d7;
 }
+.answer.correct{border-color:#4d7d4c}
+.answer.wrong{border-color:#a53d3d}
+.small{font-size:13px;color:#657168}
 .herb{
-  border-left:5px solid #718b63;
-  padding-left:14px;
+  border-left:5px solid #718d63;
 }
-ul{padding-left:22px}
-.small{font-size:14px;opacity:.75}
-.live{
-  background:#eaf2e7;
-  border-radius:16px;
-  padding:15px;
+.progress{
+  height:10px;
+  background:#dce5da;
+  border-radius:10px;
+  overflow:hidden;
+}
+.progress div{
+  height:100%;
+  width:0%;
+  background:#4d7d4c;
+}
+.hidden{display:none}
+ul{padding-left:20px}
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#fff7dc;
+  color:#604d12;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -85,359 +110,547 @@ ul{padding-left:22px}
 <div class="app">
 
 <div class="card">
-<h1>🌿 Morning Move Coach</h1>
-<p><b>10K Training + Live Herb School</b></p>
-<p class="small">
-Walk, run and learn. One herb is studied for two days.
-</p>
+  <h1>🌿 Morning Move Coach</h1>
+  <div class="subtitle">
+    10K Training + Live Herb School
+  </div>
+  <p class="small">
+    Move, learn and build your 10K fitness. One herb is studied for two days.
+  </p>
 </div>
 
 <div class="tabs">
-<button onclick="showDay(1)">Herb Day 1</button>
-<button onclick="showDay(2)">Herb Day 2</button>
-<button onclick="showDay(1)">Today's Herb</button>
+  <button class="tab" onclick="showHerbDay(1)">Herb Day 1</button>
+  <button class="tab" onclick="showHerbDay(2)">Herb Day 2</button>
+  <button class="tab" onclick="showHerbDay(0)">Today's Herb</button>
 </div>
 
-<div class="card herb" id="herbBox">
-<h2>🌼 Chamomile</h2>
-<p><b>Matricaria chamomilla</b></p>
-<div id="herbText"></div>
+<div id="herbCard" class="card herb"></div>
+
+<div class="card">
+  <h2>🏃 Today's Training</h2>
+
+  <div id="phase" class="phase">Ready</div>
+  <div id="timer" class="timer">05:00</div>
+
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+
+  <p id="trainingInfo" class="small" style="text-align:center">
+    5-minute warm-up → 7 intervals → 5-minute cooldown
+  </p>
+
+  <div style="text-align:center">
+    <button class="primary" onclick="startTraining()">▶ Start</button>
+    <button class="secondary" onclick="pauseTraining()">⏸ Pause</button>
+    <button class="danger" onclick="stopTraining()">■ Stop</button>
+  </div>
+</div>
+
+<div id="questionCard" class="card hidden">
+  <h2>🌿 Herb Question</h2>
+  <div id="questionText"></div>
+  <div id="answers"></div>
 </div>
 
 <div class="card">
-<h2>🏃 Today's Training</h2>
+  <h2>🎧 Live Herb Lesson</h2>
 
-<div class="phase" id="phase">Ready</div>
-<div class="timer" id="timer">05:00</div>
+  <p class="small">
+    During your warm-up and cooldown, the herb lesson can be spoken aloud.
+  </p>
 
-<div style="text-align:center">
-<button class="primary" onclick="startWorkout()">▶ Start Walk / Run</button>
-<button onclick="pauseWorkout()">⏸ Pause</button>
-<button onclick="stopWorkout()">■ Stop</button>
-</div>
+  <button class="primary" onclick="speakHerb()">🔊 Speak Herb Lesson</button>
+  <button class="secondary" onclick="stopVoice()">🔇 Stop Voice</button>
 
-<p id="workoutInfo" class="small">
-5-minute warm-up → training session → cool-down
-</p>
-</div>
-
-<div class="card live">
-<h2>🎧 Live Herb Lesson</h2>
-<p id="voiceStatus">
-When your workout starts, the herb lesson will be spoken while you exercise.
-</p>
-
-<button class="primary" onclick="speakHerb()">🔊 Speak Herb Lesson</button>
-<button onclick="stopVoice()">🔇 Stop Voice</button>
+  <div class="notice">
+    Voice needs to be started while you are online at least once if your
+    phone's speech engine needs to download a voice.
+  </div>
 </div>
 
 <div class="card">
-<h2>📅 12-Week 10K Plan</h2>
-<ul>
-<li><b>Monday:</b> Run/Walk</li>
-<li><b>Tuesday:</b> Strength + Mobility</li>
-<li><b>Wednesday:</b> Run/Walk</li>
-<li><b>Thursday:</b> Recovery Walk</li>
-<li><b>Friday:</b> Run/Walk</li>
-<li><b>Saturday:</b> Long Easy Session</li>
-<li><b>Sunday:</b> Recovery</li>
-</ul>
-<p class="small">
-The plan gradually increases your running and walking time over 12 weeks.
-</p>
+  <h2>📅 12-Week 10K Plan</h2>
+  <ul>
+    <li><b>Monday:</b> Run/Walk</li>
+    <li><b>Tuesday:</b> Strength + Mobility</li>
+    <li><b>Wednesday:</b> Run/Walk</li>
+    <li><b>Thursday:</b> Recovery Walk</li>
+    <li><b>Friday:</b> Run/Walk</li>
+    <li><b>Saturday:</b> Long Easy Session</li>
+    <li><b>Sunday:</b> Recovery</li>
+  </ul>
+  <p class="small">
+    The training gradually increases toward 10K over 12 weeks.
+  </p>
+</div>
+
+<div class="card">
+  <h3>📱 Offline status</h3>
+  <p id="offlineStatus" class="small">
+    Checking offline support...
+  </p>
 </div>
 
 </div>
 
 <script>
+/* =========================
+   HERB SCHOOL
+========================= */
 
-let day=1;
-let timerSeconds=300;
+const herbs = [
+{
+ name:"Chamomile",
+ latin:"Matricaria chamomilla",
+ family:"Asteraceae",
+ part:"Flowers",
+ lesson:
+ "Chamomile is a gentle relaxing herb. The flowers are traditionally used for calming, digestive support and mild tension.",
+ facts:[
+  "What part of chamomile is mainly used?",
+  "What is the botanical name of German chamomile?",
+  "Chamomile is traditionally associated with what?"
+ ],
+ answers:[
+  ["Flowers","Matricaria chamomilla","Calming and digestive support"],
+  ["Roots","Mentha piperita","Strong stimulation"],
+  ["Seeds","Salvia officinalis","Only respiratory support"]
+ ]
+},
+{
+ name:"Calendula",
+ latin:"Calendula officinalis",
+ family:"Asteraceae",
+ part:"Flowers",
+ lesson:
+ "Calendula is commonly used externally in herbal preparations for soothing and supporting the skin.",
+ facts:[
+  "Which part of calendula is commonly used?",
+  "Calendula is especially well known for supporting what?",
+  "What is the botanical name of calendula?"
+ ],
+ answers:[
+  ["Flowers","Skin","Calendula officinalis"],
+  ["Roots","Bones","Matricaria chamomilla"],
+  ["Seeds","Eyes","Valeriana officinalis"]
+ ]
+},
+{
+ name:"Peppermint",
+ latin:"Mentha × piperita",
+ family:"Lamiaceae",
+ part:"Leaves",
+ lesson:
+ "Peppermint is an aromatic herb traditionally used for digestive comfort and its cooling sensation.",
+ facts:[
+  "Which part of peppermint is commonly used?",
+  "Peppermint belongs to which family?",
+  "Peppermint is traditionally associated with what?"
+ ],
+ answers:[
+  ["Leaves","Lamiaceae","Digestive comfort"],
+  ["Roots","Asteraceae","Skin healing"],
+  ["Flowers","Rosaceae","Bone support"]
+ ]
+},
+{
+ name:"Yarrow",
+ latin:"Achillea millefolium",
+ family:"Asteraceae",
+ part:"Flowering tops",
+ lesson:
+ "Yarrow is a traditional aromatic herb. Its flowering tops have been used in herbal practice for digestive and circulatory support.",
+ facts:[
+  "What is the botanical name of yarrow?",
+  "Which family does yarrow belong to?",
+  "Which part is commonly used?"
+ ],
+ answers:[
+  ["Achillea millefolium","Asteraceae","Flowering tops"],
+  ["Matricaria chamomilla","Lamiaceae","Roots"],
+  ["Mentha piperita","Rosaceae","Seeds"]
+ ]
+},
+{
+ name:"Ginger",
+ latin:"Zingiber officinale",
+ family:"Zingiberaceae",
+ part:"Rhizome",
+ lesson:
+ "Ginger is a warming aromatic herb traditionally used for digestive comfort and nausea.",
+ facts:[
+  "Which part of ginger is used?",
+  "What is the botanical name of ginger?",
+  "Ginger is traditionally considered what type of herb?"
+ ],
+ answers:[
+  ["Rhizome","Zingiber officinale","Warming aromatic"],
+  ["Flower","Calendula officinalis","Cooling"],
+  ["Leaf","Mentha spicata","Sedating"]
+ ]
+},
+{
+ name:"Feverfew",
+ latin:"Tanacetum parthenium",
+ family:"Asteraceae",
+ part:"Leaves and flowering tops",
+ lesson:
+ "Feverfew is a traditional herb that has been studied particularly for headache and migraine prevention.",
+ facts:[
+  "What is the botanical name of feverfew?",
+  "Which family does feverfew belong to?",
+  "Feverfew has traditionally been associated with what?"
+ ],
+ answers:[
+  ["Tanacetum parthenium","Asteraceae","Headache support"],
+  ["Matricaria chamomilla","Lamiaceae","Digestion only"],
+  ["Zingiber officinale","Rosaceae","Skin support"]
+ ]
+}
+];
+
+/* One herb lasts two days */
+function herbIndex(){
+  const start = new Date("2026-08-23T00:00:00");
+  const now = new Date();
+  const days = Math.floor((now-start)/(1000*60*60*24));
+  return Math.floor(Math.max(0,days)/2) % herbs.length;
+}
+
+function currentHerb(){
+  return herbs[herbIndex()];
+}
+
+function renderHerb(day){
+  const h=currentHerb();
+  let html=`
+    <h2>🌼 ${h.name}</h2>
+    <h3>${h.latin}</h3>
+    <ul>
+      <li><b>Family:</b> ${h.family}</li>
+      <li><b>Part mainly used:</b> ${h.part}</li>
+      <li><b>Day 1:</b> Identify & Understand</li>
+      <li><b>Day 2:</b> Remember & Apply</li>
+    </ul>
+  `;
+
+  if(day===1){
+    html+=`
+      <h3>Day 1 — Identify & Understand</h3>
+      <p><b>Botanical name:</b> ${h.latin}</p>
+      <p><b>Traditional focus:</b> ${h.lesson}</p>
+    `;
+  }else if(day===2){
+    html+=`
+      <h3>Day 2 — Remember & Apply</h3>
+      <p>${h.lesson}</p>
+      <p><b>Study:</b> ${h.name} — ${h.latin}</p>
+    `;
+  }else{
+    const start = new Date("2026-08-23T00:00:00");
+    const days = Math.floor((new Date()-start)/(1000*60*60*24));
+    const todayDay=(days%2)+1;
+    html+=`
+      <h3>Today — Herb Day ${todayDay}</h3>
+      <p>${h.lesson}</p>
+    `;
+  }
+
+  document.getElementById("herbCard").innerHTML=html;
+}
+
+function showHerbDay(day){
+  renderHerb(day);
+}
+
+renderHerb(0);
+
+
+/* =========================
+   TRAINING TIMER
+========================= */
+
+/*
+  5 minute warm-up
+  7 rounds:
+     2 minute run
+     1 minute walk + question
+  5 minute cooldown
+*/
+
+const phases=[];
+
+phases.push({
+ name:"🔥 Warm-up",
+ seconds:300,
+ type:"warmup"
+});
+
+for(let i=1;i<=7;i++){
+  phases.push({
+   name:"🏃 Interval "+i+" — Run",
+   seconds:120,
+   type:"run",
+   interval:i
+  });
+
+  phases.push({
+   name:"🚶 Interval "+i+" — Walk",
+   seconds:60,
+   type:"walk",
+   interval:i
+  });
+}
+
+phases.push({
+ name:"🌿 Cooldown",
+ seconds:300,
+ type:"cooldown"
+});
+
+let phaseIndex=0;
+let remaining=phases[0].seconds;
+let timer=null;
 let running=false;
-let interval=null;
-let voiceIndex=0;
+let questionShown=false;
 
-const herbLessons = {
-
-1:[
-"Today we begin with chamomile.",
-"Chamomile belongs to the daisy family and has small white flowers with yellow centres.",
-"The two important medicinal chamomiles are German chamomile, Matricaria chamomilla, and Roman chamomile, Anthemis nobilis.",
-"German chamomile is usually an annual plant. Roman chamomile is generally perennial.",
-"The flowers are the main part used medicinally.",
-"Chamomile is traditionally used as a gentle relaxing herb.",
-"It is especially well known for supporting relaxation and calm.",
-"It is also traditionally used for digestive discomfort and mild digestive spasms.",
-"Chamomile has a long history of use when tension, stress and digestive upset occur together.",
-"While you walk today, look at the flower shape in your mind: white petals surrounding a yellow centre.",
-"That is your Day 1 chamomile lesson. Tomorrow we will concentrate on its actions, uses and preparations."
-],
-
-2:[
-"Welcome back to Day 2 of chamomile.",
-"Today we focus on what chamomile does.",
-"Chamomile is traditionally described as a relaxing nervine, meaning it can help calm nervous tension.",
-"It is also traditionally used as a digestive herb.",
-"It may be used when digestive discomfort is associated with tension or nervousness.",
-"Chamomile is also traditionally valued for its soothing and anti-inflammatory actions.",
-"Common preparations include tea, tincture and topical preparations.",
-"A simple chamomile tea is traditionally made from the dried flowers.",
-"Chamomile is also commonly used externally in washes or compresses.",
-"People who are allergic to plants in the daisy family should use caution because chamomile can cause allergic reactions.",
-"Pregnancy, medicines and individual medical conditions can change what is appropriate, so professional advice is sensible when needed.",
-"Excellent. You have now completed two days of chamomile study."
-]
-
-};
-
-function showDay(d){
-day=d;
-voiceIndex=0;
-
-let text="";
-
-if(day===1){
-text=`
-<p><b>Day 1 – Identify & Understand</b></p>
-<ul>
-<li>Botanical name: <b>Matricaria chamomilla</b></li>
-<li>Family: Daisy family</li>
-<li>Part mainly used: Flowers</li>
-<li>Appearance: White petals with a yellow centre</li>
-<li>German chamomile: Usually annual</li>
-<li>Roman chamomile: Usually perennial</li>
-<li>Traditional focus: calming and digestive support</li>
-</ul>`;
-}else{
-text=`
-<p><b>Day 2 – Actions, Uses & Preparations</b></p>
-<ul>
-<li>Relaxing nervine</li>
-<li>Traditional digestive support</li>
-<li>Soothing herb</li>
-<li>Traditionally used for tension and mild digestive discomfort</li>
-<li>Common preparation: tea</li>
-<li>Also used as tinctures and topical preparations</li>
-<li>Use caution with daisy-family allergies</li>
-</ul>`;
+function formatTime(sec){
+  const m=Math.floor(sec/60).toString().padStart(2,"0");
+  const s=(sec%60).toString().padStart(2,"0");
+  return m+":"+s;
 }
 
-document.getElementById("herbText").innerHTML=text;
+function updateScreen(){
+  const p=phases[phaseIndex];
+
+  document.getElementById("phase").textContent=p.name;
+  document.getElementById("timer").textContent=formatTime(remaining);
+
+  const total=phases.reduce((a,x)=>a+x.seconds,0);
+  const elapsed=phases
+    .slice(0,phaseIndex)
+    .reduce((a,x)=>a+x.seconds,0)
+    +(p.seconds-remaining);
+
+  document.getElementById("progressBar").style.width=
+    Math.min(100,(elapsed/total)*100)+"%";
+
+  if(p.type==="walk"){
+    document.getElementById("trainingInfo").textContent=
+      "Walk + answer your herb question";
+  }else if(p.type==="run"){
+    document.getElementById("trainingInfo").textContent=
+      "Run comfortably. Your next question comes during the walk.";
+  }else if(p.type==="warmup"){
+    document.getElementById("trainingInfo").textContent=
+      "Warm up gently while listening to today's herb.";
+  }else{
+    document.getElementById("trainingInfo").textContent=
+      "Cool down while listening to today's herb.";
+  }
 }
 
-function speak(text){
-if(!("speechSynthesis" in window)){
-document.getElementById("voiceStatus").innerText=
-"Voice is not supported by this browser.";
-return;
+function startTraining(){
+  if(running)return;
+
+  running=true;
+
+  if(phases[phaseIndex].type==="warmup" ||
+     phases[phaseIndex].type==="cooldown"){
+    speakHerb();
+  }
+
+  if(phases[phaseIndex].type==="walk" && !questionShown){
+    showQuestion(phases[phaseIndex].interval);
+  }
+
+  timer=setInterval(()=>{
+    if(!running)return;
+
+    remaining--;
+    updateScreen();
+
+    if(remaining<=0){
+      nextPhase();
+    }
+  },1000);
 }
 
-speechSynthesis.cancel();
-
-let u=new SpeechSynthesisUtterance(text);
-u.rate=.92;
-u.pitch=1;
-u.volume=1;
-
-speechSynthesis.speak(u);
-
-document.getElementById("voiceStatus").innerText=
-"🎧 Herb lesson playing...";
+function pauseTraining(){
+  running=false;
+  stopVoice();
 }
 
-function speakHerb(){
-  let lessons = herbLessons[day];
+function stopTraining(){
+  running=false;
+  clearInterval(timer);
+  timer=null;
+  phaseIndex=0;
+  remaining=phases[0].seconds;
+  questionShown=false;
+  document.getElementById("questionCard").classList.add("hidden");
+  updateScreen();
+}
 
-  if(voiceIndex >= lessons.length){
-    voiceIndex = 0;
+function nextPhase(){
+  clearInterval(timer);
+  timer=null;
+
+  phaseIndex++;
+
+  if(phaseIndex>=phases.length){
+    running=false;
+    phaseIndex=phases.length-1;
+    remaining=0;
+
+    document.getElementById("phase").textContent="🎉 Training Complete!";
+    document.getElementById("timer").textContent="DONE";
+    document.getElementById("trainingInfo").textContent=
+      "Excellent work. Training session complete.";
+    speak("Excellent work. Your training session is complete.");
     return;
   }
 
-  let u = new SpeechSynthesisUtterance(lessons[voiceIndex]);
+  remaining=phases[phaseIndex].seconds;
+  questionShown=false;
 
-  u.rate = 0.92;
-  u.pitch = 1;
-  u.volume = 1;
+  updateScreen();
 
-  u.onend = function(){
-    voiceIndex++;
+  const p=phases[phaseIndex];
 
-    if(voiceIndex < lessons.length){
-      speakHerb();
-    }
-  };
+  if(p.type==="walk"){
+    showQuestion(p.interval);
+  }
+
+  if(p.type==="warmup" || p.type==="cooldown"){
+    speakHerb();
+  }
+}
+
+
+/* =========================
+   QUESTIONS
+========================= */
+
+function showQuestion(interval){
+  const h=currentHerb();
+  const qIndex=(interval-1)%h.facts.length;
+
+  const question=h.facts[qIndex];
+  const correct=h.answers[qIndex];
+
+  const card=document.getElementById("questionCard");
+  const text=document.getElementById("questionText");
+  const answers=document.getElementById("answers");
+
+  text.innerHTML="<p><b>Interval "+interval+":</b> "+question+"</p>";
+  answers.innerHTML="";
+
+  const options=[
+    correct[0],
+    h.answers[(qIndex+1)%h.answers.length][0],
+    h.answers[(qIndex+2)%h.answers.length][0]
+  ];
+
+  options.sort(()=>Math.random()-.5);
+
+  options.forEach(option=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=option;
+
+    b.onclick=()=>{
+      if(option===correct[0]){
+        b.classList.add("correct");
+        speak("Correct. Well done.");
+      }else{
+        b.classList.add("wrong");
+        speak("Not quite. Keep learning.");
+      }
+    };
+
+    answers.appendChild(b);
+  });
+
+  card.classList.remove("hidden");
+  questionShown=true;
+
+  speak("Herb question. "+question);
+}
+
+
+/* =========================
+   VOICE
+========================= */
+
+function speak(text){
+  if(!("speechSynthesis" in window))return;
 
   speechSynthesis.cancel();
-  speechSynthesis.speak(u);
 
-  document.getElementById("voiceStatus").innerText =
-    "🎧 Herb lesson playing...";
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.9;
+  u.pitch=1;
+
+  speechSynthesis.speak(u);
+}
+
+function speakHerb(){
+  const h=currentHerb();
+
+  speak(
+    "Today's herb is "+h.name+". "+
+    "Its botanical name is "+h.latin+". "+
+    "It belongs to the "+h.family+" family. "+
+    "The part mainly used is the "+h.part+". "+
+    h.lesson
+  );
 }
 
 function stopVoice(){
-speechSynthesis.cancel();
-document.getElementById("voiceStatus").innerText=
-"Voice stopped.";
+  if("speechSynthesis" in window){
+    speechSynthesis.cancel();
+  }
 }
 
-function formatTime(sec){
-let m=Math.floor(sec/60);
-let s=sec%60;
-return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+/* =========================
+   OFFLINE SUPPORT
+========================= */
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js")
+      .then(()=>{
+        document.getElementById("offlineStatus").textContent=
+          "✅ Offline app support is ready.";
+      })
+      .catch(()=>{
+        document.getElementById("offlineStatus").textContent=
+          "⚠️ Offline support needs the sw.js file.";
+      });
+  });
+}else{
+  document.getElementById("offlineStatus").textContent=
+    "⚠️ This browser does not support offline app installation.";
 }
 
-function updateTimer(){
-document.getElementById("timer").innerText=formatTime(timerSeconds);
-}
 
- function startWorkout(){
-  if(running)return;
+/* =========================
+   SAVE BASIC PROGRESS
+========================= */
 
-  running = true;
+try{
+  localStorage.setItem(
+    "morningMoveCoachLastVisit",
+    new Date().toISOString()
+  );
+}catch(e){}
 
-  const runTime = 60;
-  const walkTime = 120;
-  const intervals = 7;
-
-  let currentInterval = 0;
-  let phase = "warmup";
-  let timerSeconds = 300;
-
-  document.getElementById("phase").innerText = "WARM-UP";
-  document.getElementById("workoutInfo").innerText =
-    "Walk comfortably for 5 minutes.";
-
-  speak("Start your 5 minute warm-up. Walk comfortably.");
-
-  clearInterval(interval);
-
-  interval = setInterval(() => {
-
-    if(timerSeconds > 0){
-      timerSeconds--;
-      updateTimer();
-      return;
-    }
-
-    if(phase === "warmup"){
-      phase = "run";
-      currentInterval = 1;
-      timerSeconds = runTime;
-
-      document.getElementById("phase").innerText =
-        "RUN — " + currentInterval + " of " + intervals;
-
-      document.getElementById("workoutInfo").innerText =
-        "Run for 1 minute.";
-
-      speak("Warm-up complete. Run for 1 minute. Interval 1 of 7.");
-      updateTimer();
-      return;
-    }
-
-    if(phase === "run"){
-      phase = "walk";
-      timerSeconds = walkTime;
-
-      document.getElementById("phase").innerText =
-        "WALK — " + currentInterval + " of " + intervals;
-
-      document.getElementById("workoutInfo").innerText =
-        "Walk for 2 minutes.";
-
-      speak("Walk for 2 minutes.");
-      updateTimer();
-      return;
-    }
-
-    if(phase === "walk"){
-
-      if(currentInterval >= intervals){
-        clearInterval(interval);
-        running = false;
-
-        document.getElementById("phase").innerText =
-          "COOL-DOWN";
-
-        document.getElementById("workoutInfo").innerText =
-          "Excellent! Your 7 run and walk intervals are complete. Cool down gently.";
-
-        timerSeconds = 300;
-        updateTimer();
-
-        speak("Excellent! Your seven run and walk intervals are complete. Begin your five minute cool-down.");
-
-        phase = "cooldown";
-
-        interval = setInterval(() => {
-          if(timerSeconds > 0){
-            timerSeconds--;
-            updateTimer();
-          } else {
-            clearInterval(interval);
-            document.getElementById("phase").innerText =
-              "WORKOUT COMPLETE";
-
-            document.getElementById("workoutInfo").innerText =
-              "Well done! Your training session is complete.";
-
-            speak("Well done! Your workout is complete.");
-          }
-        },1000);
-
-        return;
-      }
-
-      currentInterval++;
-      phase = "run";
-      timerSeconds = runTime;
-
-      document.getElementById("phase").innerText =
-        "RUN — " + currentInterval + " of " + intervals;
-
-      document.getElementById("workoutInfo").innerText =
-        "Run for 1 minute.";
-
-      speak("Run for 1 minute. Interval " + currentInterval + " of 7.");
-      updateTimer();
-    }
-
-  },1000);
-
-  updateTimer();
- }
-
-function pauseWorkout(){
-if(!running)return;
-clearInterval(interval);
-running=false;
-document.getElementById("phase").innerText="Paused";
-speechSynthesis.cancel();
-}
-
-function stopWorkout(){
-clearInterval(interval);
-running=false;
-timerSeconds=300;
-updateTimer();
-document.getElementById("phase").innerText="Ready";
-speechSynthesis.cancel();
-document.getElementById("voiceStatus").innerText=
-"Workout stopped.";
-}
-
-showDay(1);
-updateTimer();
-
+updateScreen();
 </script>
 
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js")
-    .then(() => console.log("Offline mode ready"))
-    .catch(err => console.log("Service worker error:", err));
-}
-</script>
-  
 </body>
 </html>
