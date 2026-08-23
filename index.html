@@ -753,10 +753,49 @@ function setupOffline(){
 loadWeek();
 loadHerb();
 buildPhases();
+
+function showIntervals(){
+  let old=document.getElementById("intervalList");
+  if(old) old.remove();
+
+  const box=document.createElement("div");
+  box.id="intervalList";
+  box.style.background="white";
+  box.style.borderRadius="16px";
+  box.style.padding="16px";
+  box.style.marginBottom="14px";
+  box.style.boxShadow="0 3px 12px rgba(0,0,0,.08)";
+
+  const title=document.createElement("h3");
+  title.textContent="🏃 Today's Intervals";
+  box.appendChild(title);
+
+  phases.forEach((p,i)=>{
+    const row=document.createElement("div");
+    row.style.padding="10px";
+    row.style.marginBottom="6px";
+    row.style.borderRadius="10px";
+    row.style.background="#eef4ee";
+
+    row.textContent=
+      (i+1)+". "+p.name+" — "+formatTime(p.seconds);
+
+    box.appendChild(row);
+  });
+
+  const phase=document.getElementById("phaseName");
+  if(phase && phase.parentElement){
+    phase.parentElement.parentElement.appendChild(box);
+  }
+}
+
+showIntervals();
 updateScreen();
 setupOffline();
 
-</script>
 
-</body>
-</html>
+ 
+
+
+
+ 
