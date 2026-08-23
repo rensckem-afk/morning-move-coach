@@ -290,26 +290,26 @@ function updateTimer(){
 document.getElementById("timer").innerText=formatTime(timerSeconds);
 }
 
-function startWorkout(){
-
-  if(running) return;
+ function startWorkout(){
+  if(running)return;
 
   running = true;
 
-  let runTime = 60;
-  let walkTime = 120;
-  let intervals = 7;
-  let currentInterval = 1;
-  let phase = "run";
-  timerSeconds = runTime;
+  const runTime = 60;
+  const walkTime = 120;
+  const intervals = 7;
 
-  document.getElementById("phase").innerText =
-    "RUN " + currentInterval + " of " + intervals;
+  let currentInterval = 0;
+  let phase = "warmup";
+  let timerSeconds = 300;
 
+  document.getElementById("phase").innerText = "WARM-UP";
   document.getElementById("workoutInfo").innerText =
-    "Run for 1 minute, then walk for 2 minutes.";
+    "Walk comfortably for 5 minutes.";
 
-  speak("Start your run. Run for 1 minute.");
+  speak("Start your 5 minute warm-up. Walk comfortably.");
+
+  clearInterval(interval);
 
   interval = setInterval(() => {
 
@@ -319,57 +319,93 @@ function startWorkout(){
       return;
     }
 
-    if(phase === "run"){
+    if(phase === "warmup"){
+      phase = "run";
+      currentInterval = 1;
+      timerSeconds = runTime;
 
+      document.getElementById("phase").innerText =
+        "RUN — " + currentInterval + " of " + intervals;
+
+      document.getElementById("workoutInfo").innerText =
+        "Run for 1 minute.";
+
+      speak("Warm-up complete. Run for 1 minute. Interval 1 of 7.");
+      updateTimer();
+      return;
+    }
+
+    if(phase === "run"){
       phase = "walk";
       timerSeconds = walkTime;
 
       document.getElementById("phase").innerText =
-        "WALK " + currentInterval + " of " + intervals;
+        "WALK — " + currentInterval + " of " + intervals;
 
-      speak(
-        "Time to walk for 2 minutes. " +
-        "Herb question: What herb are you studying today?"
-      );
+      document.getElementById("workoutInfo").innerText =
+        "Walk for 2 minutes.";
 
-    } else {
+      speak("Walk for 2 minutes.");
+      updateTimer();
+      return;
+    }
 
-      currentInterval++;
+    if(phase === "walk"){
 
-      if(currentInterval > intervals){
-
+      if(currentInterval >= intervals){
         clearInterval(interval);
         running = false;
 
         document.getElementById("phase").innerText =
-          "Workout complete";
+          "COOL-DOWN";
 
         document.getElementById("workoutInfo").innerText =
-          "Excellent work. Your 7 run and walk intervals are complete.";
+          "Excellent! Your 7 run and walk intervals are complete. Cool down gently.";
 
-        speak(
-          "Well done. Your 7 run and walk intervals are complete."
-        );
+        timerSeconds = 300;
+        updateTimer();
+
+        speak("Excellent! Your seven run and walk intervals are complete. Begin your five minute cool-down.");
+
+        phase = "cooldown";
+
+        interval = setInterval(() => {
+          if(timerSeconds > 0){
+            timerSeconds--;
+            updateTimer();
+          } else {
+            clearInterval(interval);
+            document.getElementById("phase").innerText =
+              "WORKOUT COMPLETE";
+
+            document.getElementById("workoutInfo").innerText =
+              "Well done! Your training session is complete.";
+
+            speak("Well done! Your workout is complete.");
+          }
+        },1000);
 
         return;
       }
 
+      currentInterval++;
       phase = "run";
       timerSeconds = runTime;
 
       document.getElementById("phase").innerText =
-        "RUN " + currentInterval + " of " + intervals;
+        "RUN — " + currentInterval + " of " + intervals;
 
-      speak(
-        "Walk complete. Start your next 1 minute run."
-      );
+      document.getElementById("workoutInfo").innerText =
+        "Run for 1 minute.";
+
+      speak("Run for 1 minute. Interval " + currentInterval + " of 7.");
+      updateTimer();
     }
 
-    updateTimer();
+  },1000);
 
-  }, 1000);
-}
-}
+  updateTimer();
+ }
 
 function pauseWorkout(){
 if(!running)return;
