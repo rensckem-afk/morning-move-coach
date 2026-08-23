@@ -246,15 +246,32 @@ document.getElementById("voiceStatus").innerText=
 }
 
 function speakHerb(){
+  let lessons = herbLessons[day];
 
-let lessons=herbLessons[day];
+  if(voiceIndex >= lessons.length){
+    voiceIndex = 0;
+    return;
+  }
 
-if(voiceIndex>=lessons.length) voiceIndex=0;
+  let u = new SpeechSynthesisUtterance(lessons[voiceIndex]);
 
-speak(lessons[voiceIndex]);
+  u.rate = 0.92;
+  u.pitch = 1;
+  u.volume = 1;
 
-voiceIndex++;
+  u.onend = function(){
+    voiceIndex++;
 
+    if(voiceIndex < lessons.length){
+      speakHerb();
+    }
+  };
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+
+  document.getElementById("voiceStatus").innerText =
+    "🎧 Herb lesson playing...";
 }
 
 function stopVoice(){
