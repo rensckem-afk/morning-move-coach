@@ -462,11 +462,13 @@ function loadWeek(){
   resetWorkout();
  });
 
- const saved=localStorage.getItem("morningMoveWeek");
+const saved=localStorage.getItem("morningMoveWeek");
 
- if(saved){
-  select.value=saved;
- }
+if(saved && Number(saved)>=1 && Number(saved)<=12){
+    select.value=saved;
+}else{
+    select.value="1";
+}
 
  buildPhases();
 }
