@@ -90,16 +90,22 @@ footer{text-align:center;padding:10px;color:#687068;font-size:13px}
   <h2>🏃 Today's Training</h2>
   <div id="todayTraining" class="card"></div>
   <div class="card">
-  <h3>⏱️ Training Timer</h3>
+ <h3>🏃 Run / Walk Training</h3>
 
-  <label for="timerDuration"><strong>Minutes:</strong></label>
-  <input id="timerDuration" type="number" min="1" value="10">
+<label for="runDuration"><strong>Run:</strong></label>
+<input id="runDuration" type="number" min="1" value="1">
 
-  <button onclick="startTimer()">Start Timer</button>
-  <button onclick="resetTimer()">Reset</button>
+<label for="walkDuration"><strong>Walk:</strong></label>
+<input id="walkDuration" type="number" min="0" value="2">
 
-  <div id="timerDisplay">10:00</div>
-</div>
+<label for="intervalCount"><strong>Intervals:</strong></label>
+<input id="intervalCount" type="number" min="1" value="7">
+
+<button onclick="startIntervalTimer()">Start Training</button>
+<button onclick="resetIntervalTimer()">Reset</button>
+
+<div id="intervalDisplay">Ready</div>
+<div id="timerDisplay">01:00</div>
 
   <button onclick="markTrainingDone()">
     Mark Today's Training Complete
@@ -815,17 +821,7 @@ let timerSeconds = 600;
 function startTimer() {
     clearInterval(timerInterval);
 
-    const phases = [
-        { name: "🔥 WARM-UP", seconds: 5 * 60 },
-        { name: "🏃 RUN", seconds: 2 * 60 },
-        { name: "🚶 WALK", seconds: 2 * 60 },
-        { name: "🏃 RUN", seconds: 2 * 60 },
-        { name: "🚶 WALK", seconds: 2 * 60 },
-        { name: "🏃 RUN", seconds: 2 * 60 },
-        { name: "🚶 WALK", seconds: 2 * 60 },
-        { name: "🏃 RUN", seconds: 3 * 60 },
-        { name: "🌿 COOL-DOWN", seconds: 5 * 60 }
-    ];
+    
 
     let phaseIndex = 0;
     let phaseSeconds = phases[0].seconds;
@@ -861,14 +857,13 @@ function startTimer() {
 }
 
 function resetTimer() {
-  clearInterval(timerInterval);
+    clearInterval(timerInterval);
 
-  const minutes = Number(document.getElementById("timerDuration").value) || 10;
-  timerSeconds = minutes * 60;
+    phaseIndex = 0;
+    phaseSeconds = phases[0].seconds;
 
-  document.getElementById("timerDisplay").textContent =
-    `${String(minutes).padStart(2, "0")}:00`;
-}  
+    updateDisplay();
+}
 </script>
 
 </body>
