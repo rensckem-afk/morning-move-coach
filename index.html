@@ -826,6 +826,11 @@ showHerb();
 let timerInterval;
 let timerSeconds = 600;
 
+const phases = [
+  { name: "Run", seconds: 150 },
+  { name: "Walk", seconds: 150 }
+];
+  
 function startTimer() {
     clearInterval(timerInterval);
 
