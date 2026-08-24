@@ -274,68 +274,305 @@ const training = {
    TWO DAYS PER HERB
 ========================= */
 
-const herbs=[
 
-{
-name:"Chamomile",
-latin:"Matricaria chamomilla",
-part:"Flower heads",
-day1:"Learn to identify chamomile by its daisy-like flower heads, scent and fine leaves.",
-day2:"Study traditional uses of chamomile and how dried flowers are prepared.",
-q1:"What features would you look for when identifying chamomile?",
-q2:"What traditional uses of chamomile have you learned?"
-},
-
-{
-name:"Peppermint",
-latin:"Mentha × piperita",
-part:"Leaves",
-day1:"Study the square stem, opposite leaves and strong mint aroma.",
-day2:"Explore traditional uses of peppermint and ways the leaves are commonly prepared.",
-q1:"How would you describe the smell of a fresh peppermint leaf?",
-q2:"What are some traditional uses of peppermint?"
-},
-
-{
-name:"Lemon Balm",
-latin:"Melissa officinalis",
-part:"Leaves",
-day1:"Learn the heart-shaped leaves, soft texture and lemon scent.",
-day2:"Study traditional uses and ways lemon balm has been used as a tea herb.",
-q1:"What makes lemon balm easy to recognise?",
-q2:"How is lemon balm traditionally prepared?"
-},
-
-{
-name:"Rosemary",
-latin:"Salvia rosmarinus",
-part:"Leaves",
-day1:"Study rosemary's narrow leaves, woody stems and strong aromatic scent.",
-day2:"Explore culinary and traditional herbal uses of rosemary.",
-q1:"Which features help you identify rosemary?",
-q2:"How has rosemary traditionally been used?"
-},
-
-{
-name:"Calendula",
-latin:"Calendula officinalis",
-part:"Flowers",
-day1:"Learn to identify calendula by its bright orange or yellow flower heads.",
-day2:"Study traditional external uses of calendula and the importance of correct identification.",
-q1:"What makes calendula flowers distinctive?",
-q2:"What traditional uses of calendula have you learned?"
-},
-
-{
-name:"Nettle",
-latin:"Urtica dioica",
-part:"Leaves",
-day1:"Learn the identifying features of nettle and why careful handling is important.",
-day2:"Study traditional uses of nettle and safe harvesting principles.",
-q1:"Why is accurate identification important with nettle?",
-q2:"What safety rule should you remember when handling nettle?"
-}
-
+const herbs = [
+  {
+    name:"Nettle",
+    latin:"Urtica dioica",
+    part:"Leaves",
+    day1:"Learn the identifying features of nettle and its common habitat.",
+    day2:"Study nettle's Materia Medica profile: parts used, taste, energetics, properties, preparations, traditional uses, safety, harvesting and storage.",
+    q1:"What are the key identification features of nettle?",
+    q2:"What are the main traditional uses and safety considerations for nettle?"
+  },
+  {
+    name:"Chamomile",
+    latin:"Matricaria recutita",
+    part:"Flower heads",
+    day1:"Learn to identify chamomile by its flowers, scent and growth habit.",
+    day2:"Study chamomile's Materia Medica profile: parts used, taste, energetics, properties, preparations, traditional uses, safety, harvesting and storage.",
+    q1:"What are the key identification features of chamomile?",
+    q2:"What are the main traditional uses and safety considerations for chamomile?"
+  },
+  {
+    name:"Comfrey",
+    latin:"Symphytum officinale",
+    part:"Leaves & root",
+    day1:"Learn the identifying features of comfrey and where it commonly grows.",
+    day2:"Study comfrey's Materia Medica profile, including parts used, traditional topical uses, preparations, safety, harvesting and storage.",
+    q1:"How can comfrey be identified?",
+    q2:"What important safety consideration applies to internal use of comfrey?"
+  },
+  {
+    name:"Dandelion",
+    latin:"Taraxacum officinale",
+    part:"Root & leaves",
+    day1:"Learn to identify dandelion by its leaves, flower and root.",
+    day2:"Study dandelion's Materia Medica profile: parts used, taste, energetics, properties, preparations, traditional uses, safety, harvesting and storage.",
+    q1:"What features distinguish dandelion?",
+    q2:"Which parts of dandelion are commonly used?"
+  },
+  {
+    name:"Cayenne Pepper",
+    latin:"Capsicum annuum",
+    part:"Fruit",
+    day1:"Learn to identify cayenne pepper and distinguish the fruit from related peppers.",
+    day2:"Study cayenne's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"What gives cayenne its characteristic heat?",
+    q2:"What safety precautions are important when handling cayenne?"
+  },
+  {
+    name:"Cinnamon",
+    latin:"Cinnamomum verum",
+    part:"Bark",
+    day1:"Learn to identify true cinnamon and understand which plant part is harvested.",
+    day2:"Study cinnamon's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which part of cinnamon is used?",
+    q2:"How can true cinnamon be distinguished botanically?"
+  },
+  {
+    name:"Fennel",
+    latin:"Foeniculum vulgare",
+    part:"Seeds",
+    day1:"Learn fennel's identifying features, especially its leaves, flowers and aromatic seeds.",
+    day2:"Study fennel's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"What gives fennel its characteristic aroma?",
+    q2:"Which part of fennel is commonly used medicinally?"
+  },
+  {
+    name:"Feverfew",
+    latin:"Tanacetum parthenium",
+    part:"Leaves & flowers",
+    day1:"Learn to identify feverfew and distinguish it from similar members of the daisy family.",
+    day2:"Study feverfew's Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"How can feverfew be identified?",
+    q2:"What important safety consideration should be remembered with feverfew?"
+  },
+  {
+    name:"Garlic",
+    latin:"Allium sativum",
+    part:"Bulb",
+    day1:"Learn to identify garlic and recognise its characteristic bulb and aroma.",
+    day2:"Study garlic's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which plant part is used in garlic?",
+    q2:"What characteristic compound group contributes to garlic's aroma?"
+  },
+  {
+    name:"Valerian",
+    latin:"Valeriana officinalis",
+    part:"Root",
+    day1:"Learn to identify valerian and recognise its characteristic root odour.",
+    day2:"Study valerian's Materia Medica profile: energetics, properties, preparations, traditional uses, safety and harvesting.",
+    q1:"Which part of valerian is used?",
+    q2:"What is valerian traditionally associated with?"
+  },
+  {
+    name:"Yarrow",
+    latin:"Achillea millefolium",
+    part:"Aerial parts",
+    day1:"Learn yarrow's identifying features, flower heads and feathery leaves.",
+    day2:"Study yarrow's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"What do yarrow's leaves look like?",
+    q2:"Which plant parts are commonly used?"
+  },
+  {
+    name:"Horseradish",
+    latin:"Armoracia rusticana",
+    part:"Root",
+    day1:"Learn to identify horseradish and its large leaves and pungent root.",
+    day2:"Study horseradish's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which part of horseradish is primarily used?",
+    q2:"What gives horseradish its pungent character?"
+  },
+  {
+    name:"Mustard",
+    latin:"Sinapis alba",
+    part:"Seeds",
+    day1:"Learn to identify white mustard and recognise its seeds and flowering structure.",
+    day2:"Study mustard's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which part of mustard is commonly used?",
+    q2:"What gives mustard its characteristic pungency?"
+  },
+  {
+    name:"Peppermint",
+    latin:"Mentha × piperita",
+    part:"Leaves",
+    day1:"Learn to identify peppermint by its leaves, scent and square stems.",
+    day2:"Study peppermint's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"How can peppermint be recognised?",
+    q2:"What gives peppermint its characteristic cooling sensation?"
+  },
+  {
+    name:"Spearmint",
+    latin:"Mentha spicata",
+    part:"Leaves",
+    day1:"Learn to identify spearmint and distinguish it from peppermint.",
+    day2:"Study spearmint's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"How does spearmint differ from peppermint?",
+    q2:"Which part of spearmint is commonly used?"
+  },
+  {
+    name:"Rose",
+    latin:"Rosa spp. / Rosa damascena",
+    part:"Petals",
+    day1:"Learn to identify medicinal roses and recognise the petals and characteristic fragrance.",
+    day2:"Study rose's Materia Medica profile: parts used, taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which part of rose is commonly used in herbal preparations?",
+    q2:"What sensory characteristic is especially important when identifying rose?"
+  },
+  {
+    name:"Sage",
+    latin:"Salvia officinalis",
+    part:"Leaves",
+    day1:"Learn to identify sage by its grey-green aromatic leaves and growth habit.",
+    day2:"Study sage's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"What are the key identification features of sage?",
+    q2:"What safety consideration is important with concentrated sage preparations?"
+  },
+  {
+    name:"Hyssop",
+    latin:"Hyssopus officinalis",
+    part:"Aerial parts",
+    day1:"Learn to identify hyssop by its narrow aromatic leaves and flowering stems.",
+    day2:"Study hyssop's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"How can hyssop be identified?",
+    q2:"Which part of hyssop is commonly used?"
+  },
+  {
+    name:"Hawthorn",
+    latin:"Crataegus monogyna",
+    part:"Flowers, leaves & berries",
+    day1:"Learn to identify hawthorn by its leaves, flowers, thorns and berries.",
+    day2:"Study hawthorn's Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"What features help identify hawthorn?",
+    q2:"Which parts of hawthorn are traditionally used?"
+  },
+  {
+    name:"Ginger",
+    latin:"Zingiber officinale",
+    part:"Rhizome",
+    day1:"Learn to identify ginger and understand the difference between the rhizome and roots.",
+    day2:"Study ginger's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which plant part is ginger?",
+    q2:"What sensory characteristic is especially noticeable in ginger?"
+  },
+  {
+    name:"Turmeric",
+    latin:"Curcuma longa",
+    part:"Rhizome",
+    day1:"Learn to identify turmeric and recognise its strongly coloured rhizome.",
+    day2:"Study turmeric's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which plant part is used in turmeric?",
+    q2:"What gives turmeric its characteristic yellow-orange colour?"
+  },
+  {
+    name:"Rosemary",
+    latin:"Salvia rosmarinus",
+    part:"Leaves",
+    day1:"Learn to identify rosemary by its narrow aromatic leaves and woody stems.",
+    day2:"Study rosemary's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"What are the key identification features of rosemary?",
+    q2:"Which part of rosemary is commonly used?"
+  },
+  {
+    name:"Thyme",
+    latin:"Thymus vulgaris",
+    part:"Aerial parts",
+    day1:"Learn to identify thyme by its small aromatic leaves and woody stems.",
+    day2:"Study thyme's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"How can thyme be identified?",
+    q2:"What gives thyme its characteristic aroma?"
+  },
+  {
+    name:"Black Pepper",
+    latin:"Piper nigrum",
+    part:"Fruit",
+    day1:"Learn about black pepper's fruit and how the dried peppercorn is produced.",
+    day2:"Study black pepper's Materia Medica profile: taste, energetics, properties, preparations, traditional uses and safety.",
+    q1:"Which plant part produces black peppercorns?",
+    q2:"What gives black pepper its characteristic pungency?"
+  },
+  {
+    name:"Echinacea",
+    latin:"Echinacea purpurea",
+    part:"Root & aerial parts",
+    day1:"Learn to identify echinacea by its flower head, leaves and growth habit.",
+    day2:"Study echinacea's Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"What are the key identifying features of echinacea?",
+    q2:"Which parts of echinacea are commonly used?"
+  },
+  {
+    name:"Cleavers",
+    latin:"Galium aparine",
+    part:"Aerial parts",
+    day1:"Learn to identify cleavers by its whorled leaves and clinging stems.",
+    day2:"Study cleavers' Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"Why does cleavers cling to clothing and other plants?",
+    q2:"Which part of cleavers is commonly used?"
+  },
+  {
+    name:"Chickweed",
+    latin:"Stellaria media",
+    part:"Aerial parts",
+    day1:"Learn to identify chickweed by its small leaves, delicate flowers and stem features.",
+    day2:"Study chickweed's Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"What features help identify chickweed?",
+    q2:"Which part of chickweed is commonly used?"
+  },
+  {
+    name:"Milk Thistle",
+    latin:"Silybum marianum",
+    part:"Seeds",
+    day1:"Learn to identify milk thistle by its distinctive marked leaves and flower heads.",
+    day2:"Study milk thistle's Materia Medica profile: seed use, constituents, properties, preparations, traditional uses and safety.",
+    q1:"What distinctive feature helps identify milk thistle?",
+    q2:"Which part of milk thistle is used medicinally?"
+  },
+  {
+    name:"Burdock",
+    latin:"Arctium lappa",
+    part:"Root",
+    day1:"Learn to identify burdock by its large leaves and characteristic burs.",
+    day2:"Study burdock's Materia Medica profile: root use, properties, preparations, traditional uses, harvesting and safety.",
+    q1:"What are the key identification features of burdock?",
+    q2:"Which part of burdock is commonly used?"
+  },
+  {
+    name:"Calendula",
+    latin:"Calendula officinalis",
+    part:"Flowers",
+    day1:"Learn to identify calendula by its bright flower heads and aromatic foliage.",
+    day2:"Study calendula's Materia Medica profile: flowers, properties, preparations, traditional uses, topical applications and safety.",
+    q1:"How can calendula be identified?",
+    q2:"Which part of calendula is commonly used?"
+  },
+  {
+    name:"Parsley",
+    latin:"Petroselinum crispum",
+    part:"Leaves",
+    day1:"Learn to identify parsley and distinguish its leaf forms from similar plants.",
+    day2:"Study parsley's Materia Medica profile: parts used, properties, preparations, traditional uses and safety.",
+    q1:"What are the key identification features of parsley?",
+    q2:"Which part of parsley is being studied in this course?"
+  },
+  {
+    name:"Parsley Piert",
+    latin:"Aphanes arvensis",
+    part:"Aerial parts",
+    day1:"Learn to identify parsley piert and distinguish it from true parsley.",
+    day2:"Study parsley piert's Materia Medica profile: identification, parts used, traditional uses, preparations and safety.",
+    q1:"How is parsley piert different from parsley?",
+    q2:"Which part of parsley piert is commonly used?"
+  },
+  {
+    name:"Plantain",
+    latin:"Plantago lanceolata",
+    part:"Leaves",
+    day1:"Learn to identify ribwort plantain by its narrow leaves and distinctive flower spike.",
+    day2:"Study plantain's Materia Medica profile: leaves, properties, preparations, traditional uses, harvesting and safety.",
+    q1:"What are the key identification features of ribwort plantain?",
+    q2:"Which part of plantain is commonly used?"
+  }
 ];
 
 
