@@ -89,6 +89,17 @@ footer{text-align:center;padding:10px;color:#687068;font-size:13px}
 <section>
   <h2>🏃 Today's Training</h2>
   <div id="todayTraining" class="card"></div>
+  <div class="card">
+  <h3>⏱️ Training Timer</h3>
+
+  <label for="timerDuration"><strong>Minutes:</strong></label>
+  <input id="timerDuration" type="number" min="1" value="10">
+
+  <button onclick="startTimer()">Start Timer</button>
+  <button onclick="resetTimer()">Reset</button>
+
+  <div id="timerDisplay">10:00</div>
+</div>
 
   <button onclick="markTrainingDone()">
     Mark Today's Training Complete
@@ -796,6 +807,43 @@ document
 buildWeeks();
 showHerb();
 
+  
+
+let timerInterval;
+let timerSeconds = 600;
+
+function startTimer() {
+  clearInterval(timerInterval);
+
+  const minutes = Number(document.getElementById("timerDuration").value) || 10;
+  timerSeconds = minutes * 60;
+
+  timerInterval = setInterval(() => {
+    const mins = Math.floor(timerSeconds / 60);
+    const secs = timerSeconds % 60;
+
+    document.getElementById("timerDisplay").textContent =
+      `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert("Training timer complete!");
+      return;
+    }
+
+    timerSeconds--;
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+
+  const minutes = Number(document.getElementById("timerDuration").value) || 10;
+  timerSeconds = minutes * 60;
+
+  document.getElementById("timerDisplay").textContent =
+    `${String(minutes).padStart(2, "0")}:00`;
+}  
 </script>
 
 </body>
