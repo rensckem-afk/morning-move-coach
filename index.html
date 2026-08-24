@@ -826,50 +826,79 @@ showHerb();
 let timerInterval;
 let timerSeconds = 600;
 
-const phases = [
-  { name: "Run", seconds: 150 },
-  { name: "Walk", seconds: 150 }
-];
-  
+let phaseIndex = 0;
+let phaseSeconds = 0;
+let phases = [];
+
+function buildTrainingPhases() {
+  const runMinutes = Number(document.getElementById("runDuration").value) || 1;
+  const walkMinutes = Number(document.getElementById("walkDuration").value) || 2;
+  const intervals = Number(document.getElementById("intervals").value) || 1;
+
+  phases = [
+    { name: "WARM-UP", seconds: 150 }
+  ];
+
+  for (let i = 0; i < intervals; i++) {
+    phases.push({ name: "RUN", seconds: runMinutes * 60 });
+    phases.push({ name: "WALK", seconds: walkMinutes * 60 });
+  }
+
+  phases.push({ name: "COOL-DOWN", seconds: 150 });
+}
+
 function startTimer() {
-    clearInterval(timerInterval);
+  clearInterval(timerInterval);
 
-    
+  buildTrainingPhases();
 
-    let phaseIndex = 0;
-    let phaseSeconds = phases[0].seconds;
+  phaseIndex = 0;
+  phaseSeconds = phases[0].seconds;
 
-    function updateDisplay() {
-        const mins = Math.floor(phaseSeconds / 60);
-        const secs = phaseSeconds % 60;
+  function updateDisplay() {
+    const mins = Math.floor(phaseSeconds / 60);
+    const secs = phaseSeconds % 60;
 
+    document.getElementById("timerDisplay").textContent =
+      `${phases[phaseIndex].name} - ${mins}:${String(secs).padStart(2, "0")}`;
+  }
+
+  updateDisplay();
+
+  timerInterval = setInterval(() => {
+    phaseSeconds--;
+
+    if (phaseSeconds < 0) {
+      phaseIndex++;
+
+      if (phaseIndex >= phases.length) {
+        clearInterval(timerInterval);
         document.getElementById("timerDisplay").textContent =
-            `${phases[phaseIndex].name} — ${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+          "✅ TRAINING COMPLETE";
+        return;
+      }
+
+      phaseSeconds = phases[phaseIndex].seconds;
     }
 
     updateDisplay();
-
-    timerInterval = setInterval(() => {
-        phaseSeconds--;
-
-        if (phaseSeconds < 0) {
-            phaseIndex++;
-
-            if (phaseIndex >= phases.length) {
-                clearInterval(timerInterval);
-                document.getElementById("timerDisplay").textContent =
-                    "✅ TRAINING COMPLETE";
-                return;
-            }
-
-            phaseSeconds = phases[phaseIndex].seconds;
-        }
-
-        updateDisplay();
-    }, 1000);
+  }, 1000);
 }
 
 function resetTimer() {
+  clearInterval(timerInterval);
+
+  buildTrainingPhases();
+
+  phaseIndex = 0;
+  phaseSeconds = phases[0].seconds;
+
+  const mins = Math.floor(phaseSeconds / 60);
+  const secs = phaseSeconds % 60;
+
+  document.getElementById("timerDisplay").textContent =
+    `${phases[phaseIndex].name} - ${mins}:${String(secs).padStart(2, "0")}`;
+}
     clearInterval(timerInterval);
 
     phaseIndex = 0;
