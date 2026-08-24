@@ -692,11 +692,11 @@ function markTrainingDone(){
 
 function getHerb(){
 
-  const day=new Date().getDate();
+  const day = new Date().getDate();
 
-  const index=Math.floor((day-1)/2)%herbs.length;
+  const index = Math.floor((day - 24) / 2);
 
-  return herbs[index];
+  return herbs[((index % herbs.length) + herbs.length) % herbs.length];
 }
 
 
