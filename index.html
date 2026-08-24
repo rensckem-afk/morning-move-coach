@@ -1,27 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Morning Move Coach</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5f7f52">
+<title>Morning Move Coach</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f1e8;
+  color:#293329;
+}
+.app{
+  max-width:700px;
+  margin:auto;
+  padding:12px;
+}
+header,section{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+h1{margin:0;color:#405c38;font-size:27px}
+h2{color:#405c38;margin-top:0}
+h3{color:#405c38}
+select,button{
+  width:100%;
+  padding:13px;
+  margin-top:8px;
+  border-radius:12px;
+  font-size:16px;
+}
+select{border:1px solid #b9c5b3;background:white}
+button{
+  border:0;
+  background:#5f7f52;
+  color:white;
+  font-weight:bold;
+}
+.card{
+  background:#f0f4ec;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
+}
+.small{font-size:14px;color:#687068}
+.question{
+  border-top:1px solid #d7ddd2;
+  margin-top:14px;
+  padding-top:12px;
+}
+.done{
+  background:#e5efdf;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+}
+footer{text-align:center;padding:10px;color:#687068;font-size:13px}
+</style>
 </head>
 
 <body>
+
+<div class="app">
+
+<header>
   <h1>🌿 Morning Move Coach</h1>
-  <h2>10K Training + Live Herb School</h2>
-
-  <p>
-    Move, learn and build your 10K fitness.
-    One herb is studied for two days.
+  <p><strong>10K Training + Live Herb School</strong></p>
+  <p class="small">
+    Your training and herb school are designed to work offline.
   </p>
+</header>
 
-  <h2>Training Week</h2>
-  <p>Your 12-week 10K training programme will appear here.</p>
+<section>
+  <h2>🏃 Training Week</h2>
 
-  <h2>Today's Herb</h2>
-  <p>Chamomile — <em>Matricaria chamomilla</em></p>
+  <label for="weekSelect"><strong>Choose your week</strong></label>
+  <select id="weekSelect"></select>
 
-  <h2>Today's Training</h2>
-  <p>Your training session will appear here.</p>
+  <div id="weekContent" class="card"></div>
+</section>
+
+<section>
+  <h2>🏃 Today's Training</h2>
+  <div id="todayTraining" class="card"></div>
+
+  <button onclick="markTrainingDone()">
+    Mark Today's Training Complete
+  </button>
+
+  <div id="trainingStatus"></div>
+</section>
+
+<section>
+  <h2>🌿 Today's Herb</h2>
+  <div id="herbContent" class="card"></div>
+</section>
+
+<section>
+  <h2>📖 Herb Session</h2>
+  <div id="sessionContent" class="card"></div>
+
+  <button onclick="markHerbDone()">
+    Mark Herb Session Complete
+  </button>
+
+  <div id="herbStatus"></div>
+</section>
+
+<section>
+  <h2>❓ Herb Question</h2>
+
+  <div class="card">
+    <p id="herbQuestion"></p>
+
+    <textarea
+      id="answer"
+      rows="5"
+      style="width:100%;padding:12px;border-radius:10px;border:1px solid #b9c5b3"
+      placeholder="Write your answer here..."
+    ></textarea>
+
+    <button onclick="saveAnswer()">Save My Answer</button>
+
+    <p id="answerStatus" class="small"></p>
+  </div>
+</section>
+
+<footer>
+  Morning Move Coach • Offline-first
+</footer>
+
+</div>
+
+<script>
+
+/* =========================
+   12-WEEK TRAINING
+========================= */
+
+const training = {
+
+1:[
+"Monday — Easy run/walk: 25 minutes",
+"Tuesday — Strength + mobility: 20 minutes",
+"Wednesday — Easy run/walk: 25 minutes",
+"Thursday — Recovery walk: 20 minutes",
+"Friday — Easy run/walk: 25 minutes",
+"Saturday — Long easy session: 35 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+2:[
+"Monday — Easy run/walk: 28 minutes",
+"Tuesday — Strength + mobility: 20 minutes",
+"Wednesday — Easy run/walk: 28 minutes",
+"Thursday — Recovery walk: 20 minutes",
+"Friday — Easy run/walk: 28 minutes",
+"Saturday — Long easy session: 40 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+3:[
+"Monday — Easy run/walk: 30 minutes",
+"Tuesday — Strength + mobility: 20 minutes",
+"Wednesday — Run/walk intervals: 30 minutes",
+"Thursday — Recovery walk: 20 minutes",
+"Friday — Easy run/walk: 30 minutes",
+"Saturday — Long easy session: 45 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+4:[
+"Monday — Easy run/walk: 30 minutes",
+"Tuesday — Strength + mobility: 25 minutes",
+"Wednesday — Run/walk intervals: 32 minutes",
+"Thursday — Recovery walk: 25 minutes",
+"Friday — Easy run/walk: 30 minutes",
+"Saturday — Long easy session: 50 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+5:[
+"Monday — Easy run/walk: 35 minutes",
+"Tuesday — Strength + mobility: 25 minutes",
+"Wednesday — Run/walk intervals: 35 minutes",
+"Thursday — Recovery walk: 25 minutes",
+"Friday — Easy run/walk: 35 minutes",
+"Saturday — Long easy session: 55 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+6:[
+"Monday — Easy run/walk: 35 minutes",
+"Tuesday — Strength + mobility: 30 minutes",
+"Wednesday — Run/walk intervals: 38 minutes",
+"Thursday — Recovery walk: 25 minutes",
+"Friday — Easy run/walk: 35 minutes",
+"Saturday — Long easy session: 60 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+7:[
+"Monday — Easy run/walk: 40 minutes",
+"Tuesday — Strength + mobility: 30 minutes",
+"Wednesday — Run/walk intervals: 40 minutes",
+"Thursday — Recovery walk: 30 minutes",
+"Friday — Easy run/walk: 40 minutes",
+"Saturday — Long easy session: 65 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+8:[
+"Monday — Easy run/walk: 40 minutes",
+"Tuesday — Strength + mobility: 30 minutes",
+"Wednesday — Run/walk intervals: 42 minutes",
+"Thursday — Recovery walk: 30 minutes",
+"Friday — Easy run/walk: 40 minutes",
+"Saturday — Long easy session: 70 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+9:[
+"Monday — Easy run/walk: 42 minutes",
+"Tuesday — Strength + mobility: 30 minutes",
+"Wednesday — Run/walk intervals: 45 minutes",
+"Thursday — Recovery walk: 30 minutes",
+"Friday — Easy run/walk: 42 minutes",
+"Saturday — Long easy session: 75 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+10:[
+"Monday — Easy run/walk: 45 minutes",
+"Tuesday — Strength + mobility: 30 minutes",
+"Wednesday — Run/walk intervals: 45 minutes",
+"Thursday — Recovery walk: 30 minutes",
+"Friday — Easy run/walk: 45 minutes",
+"Saturday — Long easy session: 80 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+11:[
+"Monday — Easy run/walk: 40 minutes",
+"Tuesday — Strength + mobility: 25 minutes",
+"Wednesday — Comfortable continuous effort: 45 minutes",
+"Thursday — Recovery walk: 25 minutes",
+"Friday — Easy run/walk: 40 minutes",
+"Saturday — Long easy session: 70 minutes",
+"Sunday — Rest or gentle walk"
+],
+
+12:[
+"Monday — Easy run/walk: 30 minutes",
+"Tuesday — Light strength + mobility: 20 minutes",
+"Wednesday — Easy run: 25 minutes",
+"Thursday — Recovery walk: 20 minutes",
+"Friday — Very easy movement: 20 minutes",
+"Saturday — 10K goal session",
+"Sunday — Recovery and celebration 🌿"
+]
+
+};
+
+
+/* =========================
+   HERB SCHOOL
+   TWO DAYS PER HERB
+========================= */
+
+const herbs=[
+
+{
+name:"Chamomile",
+latin:"Matricaria chamomilla",
+part:"Flower heads",
+day1:"Learn to identify chamomile by its daisy-like flower heads, scent and fine leaves.",
+day2:"Study traditional uses of chamomile and how dried flowers are prepared.",
+q1:"What features would you look for when identifying chamomile?",
+q2:"What traditional uses of chamomile have you learned?"
+},
+
+{
+name:"Peppermint",
+latin:"Mentha × piperita",
+part:"Leaves",
+day1:"Study the square stem, opposite leaves and strong mint aroma.",
+day2:"Explore traditional uses of peppermint and ways the leaves are commonly prepared.",
+q1:"How would you describe the smell of a fresh peppermint leaf?",
+q2:"What are some traditional uses of peppermint?"
+},
+
+{
+name:"Lemon Balm",
+latin:"Melissa officinalis",
+part:"Leaves",
+day1:"Learn the heart-shaped leaves, soft texture and lemon scent.",
+day2:"Study traditional uses and ways lemon balm has been used as a tea herb.",
+q1:"What makes lemon balm easy to recognise?",
+q2:"How is lemon balm traditionally prepared?"
+},
+
+{
+name:"Rosemary",
+latin:"Salvia rosmarinus",
+part:"Leaves",
+day1:"Study rosemary's narrow leaves, woody stems and strong aromatic scent.",
+day2:"Explore culinary and traditional herbal uses of rosemary.",
+q1:"Which features help you identify rosemary?",
+q2:"How has rosemary traditionally been used?"
+},
+
+{
+name:"Calendula",
+latin:"Calendula officinalis",
+part:"Flowers",
+day1:"Learn to identify calendula by its bright orange or yellow flower heads.",
+day2:"Study traditional external uses of calendula and the importance of correct identification.",
+q1:"What makes calendula flowers distinctive?",
+q2:"What traditional uses of calendula have you learned?"
+},
+
+{
+name:"Nettle",
+latin:"Urtica dioica",
+part:"Leaves",
+day1:"Learn the identifying features of nettle and why careful handling is important.",
+day2:"Study traditional uses of nettle and safe harvesting principles.",
+q1:"Why is accurate identification important with nettle?",
+q2:"What safety rule should you remember when handling nettle?"
+}
+
+];
+
+
+/* =========================
+   LOCAL STORAGE
+========================= */
+
+function getData(key, fallback){
+  try{
+    const value=localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+
+function saveData(key,value){
+  localStorage.setItem(key,JSON.stringify(value));
+}
+
+
+/* =========================
+   WEEK SELECTOR
+========================= */
+
+function buildWeeks(){
+
+  const select=document.getElementById("weekSelect");
+
+  select.innerHTML="";
+
+  for(let i=1;i<=12;i++){
+
+    const option=document.createElement("option");
+
+    option.value=i;
+    option.textContent="Week "+i;
+
+    select.appendChild(option);
+  }
+
+  const saved=getData("selectedWeek",1);
+
+  select.value=saved;
+
+  showWeek();
+}
+
+
+function showWeek(){
+
+  const week=Number(
+    document.getElementById("weekSelect").value
+  );
+
+  saveData("selectedWeek",week);
+
+  const days=training[week];
+
+  let html="<h3>Week "+week+"</h3><ul>";
+
+  days.forEach(day=>{
+    html+="<li>"+day+"</li>";
+  });
+
+  html+="</ul>";
+
+  document.getElementById("weekContent").innerHTML=html;
+
+  showTodayTraining();
+}
+
+
+/* =========================
+   TODAY'S TRAINING
+========================= */
+
+function showTodayTraining(){
+
+  const week=Number(
+    document.getElementById("weekSelect").value
+  );
+
+  const days=training[week];
+
+  const today=new Date().getDay();
+
+  const index=today===0 ? 6 : today-1;
+
+  const todayText=days[index];
+
+  document.getElementById("todayTraining").innerHTML=
+    "<strong>"+todayText+"</strong>"+
+    "<p class='small'>Keep today's effort comfortable and controlled.</p>";
+
+  const done=getData("trainingDone",false);
+
+  document.getElementById("trainingStatus").innerHTML=
+    done
+    ? "<div class='done'>✅ Today's training is complete.</div>"
+    : "";
+}
+
+
+function markTrainingDone(){
+
+  saveData("trainingDone",true);
+
+  document.getElementById("trainingStatus").innerHTML=
+    "<div class='done'>✅ Training saved on this device.</div>";
+}
+
+
+/* =========================
+   HERB SESSION
+========================= */
+
+function getHerb(){
+
+  const day=new Date().getDate();
+
+  const index=Math.floor((day-1)/2)%herbs.length;
+
+  return herbs[index];
+}
+
+
+function getHerbDay(){
+
+  const day=new Date().getDate();
+
+  return ((day-1)%2)+1;
+}
+
+
+function showHerb(){
+
+  const herb=getHerb();
+
+  const herbDay=getHerbDay();
+
+  document.getElementById("herbContent").innerHTML=
+    "<h3>"+herb.name+"</h3>"+
+    "<p><em>"+herb.latin+"</em></p>"+
+    "<p><strong>Part studied:</strong> "+herb.part+"</p>"+
+    "<p><strong>Day "+herbDay+" of 2</strong></p>";
+
+  const lesson=
+    herbDay===1 ? herb.day1 : herb.day2;
+
+  document.getElementById("sessionContent").innerHTML=
+    "<h3>"+herb.name+" — Day "+herbDay+"</h3>"+
+    "<p>"+lesson+"</p>";
+
+  const question=
+    herbDay===1 ? herb.q1 : herb.q2;
+
+  document.getElementById("herbQuestion").textContent=question;
+
+  const savedAnswers=getData("herbAnswers",{});
+
+  const answerKey=
+    herb.name+"-"+herbDay+"-"+new Date().toDateString();
+
+  document.getElementById("answer").value=
+    savedAnswers[answerKey] || "";
+
+  document.getElementById("answerStatus").textContent="";
+
+  const completed=getData("herbDone",false);
+
+  document.getElementById("herbStatus").innerHTML=
+    completed
+    ? "<div class='done'>✅ Today's herb session is complete.</div>"
+    : "";
+}
+
+
+function markHerbDone(){
+
+  saveData("herbDone",true);
+
+  document.getElementById("herbStatus").innerHTML=
+    "<div class='done'>✅ Herb session saved on this device.</div>";
+}
+
+
+/* =========================
+   HERB ANSWERS
+========================= */
+
+function saveAnswer(){
+
+  const herb=getHerb();
+
+  const herbDay=getHerbDay();
+
+  const key=
+    herb.name+"-"+herbDay+"-"+new Date().toDateString();
+
+  const answers=getData("herbAnswers",{});
+
+  answers[key]=
+    document.getElementById("answer").value;
+
+  saveData("herbAnswers",answers);
+
+  document.getElementById("answerStatus").textContent=
+    "Answer saved on this device.";
+}
+
+
+/* =========================
+   START APP
+========================= */
+
+document
+  .getElementById("weekSelect")
+  .addEventListener("change",showWeek);
+
+buildWeeks();
+showHerb();
+
+</script>
+
 </body>
 </html>
